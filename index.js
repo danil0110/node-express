@@ -16,19 +16,22 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.render('index', {
-        title: 'Главная страница'
+        title: 'Главная страница',
+        isHome: true
     });
 });
 
 app.get('/courses', (req, res) => {
     res.render('courses', {
-        title: 'Курсы'
+        title: 'Курсы',
+        isCourses: true
     });
 });
 
 app.get('/add', (req, res) => {
     res.render('add', {
-        title: 'Добавить курс'
+        title: 'Добавить курс',
+        isAdd: true
     });
 });
 
