@@ -46,6 +46,30 @@ class Cart {
             });
         });
     }
+
+    static async remove(id) {
+        const cart = await Cart.fetch();
+        const idx = cart.courses.findIndex(item => item.id === id);
+        const course = cart.courses[idx];
+
+        if (course.count === 1) {
+            cart.courses = cart.courses.filter(item => item.id !== id);
+        } else {
+            cart.courses[idx].count--;
+        }
+
+        cart.price -= course.price;
+
+        return new Promise((resolve, reject) => {
+            fs.writeFile(p, JSON.stringify(cart), err => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(cart);
+                }
+            });
+        });
+    }
 }
 
 module.exports = Cart;
