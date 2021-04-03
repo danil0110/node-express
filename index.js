@@ -1,5 +1,6 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
+const mongoose = require('mongoose');
 const path = require('path');
 
 const homeRoutes = require('./routes/home');
@@ -28,6 +29,16 @@ app.use('/cart', cartRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}...`);
-});
+async function start() {
+    try {
+        const url = 'mongodb+srv://danil0110:oEADX8zLPqBYFiRF@cluster0.8iyiy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+        await mongoose.connect(url, {useNewUrlParser: true});
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}...`);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+start();
