@@ -27,7 +27,7 @@ router.get('/:id/edit', async (req, res) => {
 router.post('/edit', async (req, res) => {
     const {id} = req.body;
     delete req.body.id;
-    await Course.findByIdAndRemove(id, req.body);
+    await Course.findByIdAndUpdate(id, req.body);
     res.redirect('/courses');
 });
 
