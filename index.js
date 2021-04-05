@@ -3,6 +3,7 @@ const exphbs = require('express-handlebars');
 const Handlebars = require('handlebars');
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 const mongoose = require('mongoose');
+const session = require('express-session');
 const path = require('path');
 
 const homeRoutes = require('./routes/home');
@@ -11,8 +12,8 @@ const cartRoutes = require('./routes/cart');
 const addRoutes = require('./routes/add');
 const ordersRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
-
 const User = require('./models/user');
+const varMiddleware = require('./middleware/variables');
 
 const app = express();
 const hbs = exphbs.create({
@@ -38,6 +39,12 @@ app.use(async (req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({extended: true}));
+app.use(session({
+    secret: 'some secret value',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(varMiddleware);
 
 app.use('/', homeRoutes);
 app.use('/courses', coursesRoutes);
