@@ -5,6 +5,7 @@ const router = Router();
 function mapCartItems(cart) {
     return cart.items.map(item => ({
         ...item.courseId._doc,
+        id: item.courseId.id,
         count: item.count
     }));
 }
@@ -20,7 +21,18 @@ router.post('/add', async (req, res) => {
 });
 
 router.delete('/remove/:id', async (req, res) => {
-    const cart = await Cart.remove(req.params.id);
+    await req.user.removeFromCart(req.params.id);
+    const user = await req.user
+        .populate('cart.items.courseId')
+        .execPopulate();
+
+    const courses = mapCartItems(user.cart);
+
+    const cart = {
+        courses,
+        price: computePrice(courses)
+    }
+
     res.status(200).json(cart);
 });
 
@@ -34,7 +46,7 @@ router.get('/', async (req, res) => {
     res.render('cart', {
         title: 'Корзина',
         isCart: true,
-        courses: courses,
+        courses,
         price: computePrice(courses)
     });
 });

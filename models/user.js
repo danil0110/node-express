@@ -32,12 +32,26 @@ UserSchema.methods.addToCart = function(course) {
     const idx = items.findIndex(item => item.courseId.toString() === course._id.toString());
 
     if (idx >= 0) {
-        items[idx].count = items[idx].count + 1;
+        items[idx].count++;
     } else {
         items.push({
             courseId: course._id,
             count: 1
         });
+    }
+
+    this.cart = {items};
+    return this.save();
+}
+
+UserSchema.methods.removeFromCart = function(id) {
+    let items = [...this.cart.items];
+    const idx = items.findIndex(item => item.courseId.toString() === id.toString());
+
+    if (items[idx].count === 1) {
+        items = items.filter(item => item.courseId.toString() !== id.toString());
+    } else {
+        items[idx].count--;
     }
 
     this.cart = {items};
