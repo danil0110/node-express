@@ -3,10 +3,21 @@ const Order = require('../models/order');
 const router = Router();
 
 router.get('/', async (req, res) => {
-    res.render('orders', {
-        isOrder: true,
-        title: 'Заказы'
-    });
+    try {
+        const orders = Order.find({'user.userId': req.user._id})
+            .populate('user.userId');
+        
+        res.render('orders', {
+            isOrder: true,
+            title: 'Заказы',
+            orders: orders.map(item => ({
+                ...item._doc,
+                price: item.courses.reduce((total, item) => total + item.count * item.course.price, 0)
+            }))
+        });
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 router.post('/', async (req, res) => {
