@@ -4,7 +4,7 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const orders = Order.find({'user.userId': req.user._id})
+        const orders = await Order.find({'user.userId': req.user._id})
             .populate('user.userId');
         
         res.render('orders', {
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
             title: 'Заказы',
             orders: orders.map(item => ({
                 ...item._doc,
-                price: item.courses.reduce((total, item) => total + item.count * item.course.price, 0)
+                price: item.courses.reduce((total, c) => total + c.count * c.course.price, 0)
             }))
         });
     } catch (e) {
