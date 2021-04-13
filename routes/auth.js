@@ -36,11 +36,11 @@ router.post('/login', async (req, res) => {
                 });
             }
             else {
-                req.flash('loginError', 'Неверный пароль');
+                req.flash('loginError', 'Неверный пароль.');
                 res.redirect('/auth/login#login');
             }
         } else {
-            req.flash('loginError', 'Такого пользователя не существует');
+            req.flash('loginError', 'Такого пользователя не существует.');
             res.redirect('/auth/login#login');
         }
     } catch (e) {
@@ -50,12 +50,12 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password, repeat } = req.body;
+        const { name, email, password, confirm } = req.body;
         const candidate = await User.findOne({ email });
         if (candidate) {
-            req.flash('registerError', 'Пользователь с таким Email уже существует')
+            req.flash('registerError', 'Пользователь с таким email уже существует.');
             res.redirect('/auth/login#register');
-        } else {
+        } else if (password === confirm) {
             const hashPassword = await bcrypt.hash(password, 10);
             const newUser = new User({
                 email,
@@ -65,6 +65,9 @@ router.post('/register', async (req, res) => {
             });
             await newUser.save();
             res.redirect('/auth/login#login');
+        } else {
+            req.flash('registerError', 'Пароли не совпадают, повторите попытку.');
+            res.redirect('/auth/login#register');
         }
     } catch (e) {
         console.log(e);
