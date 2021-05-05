@@ -7,9 +7,13 @@ const keys = require('../keys');
 const regEmail = require('../emails/registration');
 const router = Router();
 
-const transporter = nodemailer.createTransport(sendgrid({
-    auth: { api_key: keys.SENDGRID_API_KEY }
-}));
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USERNAME,
+        pass: process.env.GMAIL_PASSWORD
+    }
+});
 
 router.get('/login', async (req, res) => {
     res.render('auth/login', {
