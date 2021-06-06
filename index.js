@@ -24,6 +24,7 @@ const app = express();
 const hbs = exphbs.create({
     defaultLayout: 'main',
     extname: 'hbs',
+    helpers: require('./utils/hbs-helpers'),
     handlebars: allowInsecurePrototypeAccess(Handlebars)
 });
 const store = new MongoStore({
