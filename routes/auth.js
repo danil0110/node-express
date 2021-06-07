@@ -64,8 +64,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', registerValidators, async (req, res) => {
 	try {
-		const { name, email, password, confirm } = req.body;
-		const candidate = await User.findOne({ email });
+		const { name, email, password } = req.body;
 
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -73,24 +72,16 @@ router.post('/register', registerValidators, async (req, res) => {
 			return res.status(422).redirect('/auth/login#register');
 		}
 
-		if (candidate) {
-			req.flash('registerError', 'Пользователь с таким email уже существует.');
-			res.redirect('/auth/login#register');
-		} else if (password === confirm) {
-			const hashPassword = await bcrypt.hash(password, 10);
-			const newUser = new User({
-				email,
-				name,
-				password: hashPassword,
-				cart: { items: [] },
-			});
-			await newUser.save();
-			res.redirect('/auth/login#login');
-			await transporter.sendMail(regEmail(email));
-		} else {
-			req.flash('registerError', 'Пароли не совпадают, повторите попытку.');
-			res.redirect('/auth/login#register');
-		}
+		const hashPassword = await bcrypt.hash(password, 10);
+		const newUser = new User({
+			email,
+			name,
+			password: hashPassword,
+			cart: { items: [] },
+		});
+		await newUser.save();
+		res.redirect('/auth/login#login');
+		await transporter.sendMail(regEmail(email));
 	} catch (e) {
 		console.log(e);
 	}
