@@ -1,4 +1,4 @@
-const { body } = require('express-validator/check');
+const { body } = require('express-validator');
 const User = require('../models/user');
 
 exports.registerValidators = [
@@ -14,14 +14,17 @@ exports.registerValidators = [
 			} catch (e) {
 				console.log(e);
 			}
-		}),
-	body('password', 'Минимальная длина пароля 6 символов').isLength({ min: 6, max: 56 }).isAlphanumeric(),
-	body('confirm').custom((value, { req }) => {
-		if (value !== req.body.password) {
-			throw new Error('Пароли должны совпадать');
-		}
+		})
+		.normalizeEmail(),
+	body('password', 'Минимальная длина пароля 6 символов').isLength({ min: 6, max: 56 }).isAlphanumeric().trim(),
+	body('confirm')
+		.custom((value, { req }) => {
+			if (value !== req.body.password) {
+				throw new Error('Пароли должны совпадать');
+			}
 
-		return true;
-	}),
-	body('name').isLength({ min: 3 }).withMessage('Минимальная длина имени 3 символа'),
+			return true;
+		})
+		.trim(),
+	body('name').isLength({ min: 3 }).withMessage('Минимальная длина имени 3 символа').trim(),
 ];
