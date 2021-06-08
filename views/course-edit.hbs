@@ -1,6 +1,10 @@
 <h1>Редактировать {{course.title}}</h1>
 
-<form action="/courses/edit" class="course-form" method="POST">
+{{#if editError}}
+    <p class="alert">{{editError}}</p>
+{{/if}}
+
+<form action="/courses/edit" class="course-form" method="POST" novalidate>
     <div class="input-field col s6">
         <input id="title" name="title" type="text" class="validate" required value="{{course.title}}">
         <label for="title">Название курса</label>
