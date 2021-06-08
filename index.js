@@ -10,6 +10,7 @@ const {
 } = require('@handlebars/allow-prototype-access');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const compression = require('compression');
 const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
 
@@ -56,7 +57,12 @@ app.use(
 app.use(fileMiddleware.single('avatar'));
 app.use(csrf());
 app.use(flash());
-app.use(helmet());
+app.use(
+	helmet({
+		contentSecurityPolicy: false,
+	})
+);
+app.use(compression());
 
 app.use(varMiddleware);
 app.use(userMiddleware);
