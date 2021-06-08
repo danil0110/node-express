@@ -28,3 +28,21 @@ exports.registerValidators = [
 		.trim(),
 	body('name').isLength({ min: 3 }).withMessage('Минимальная длина имени 3 символа').trim(),
 ];
+
+exports.loginValidators = [
+	body('email')
+		.isEmail()
+		.withMessage('Введите корректный email')
+		.custom(async (value, { req }) => {
+			try {
+				const candidate = await User.findOne({ email: value });
+				if (!candidate) {
+					return Promise.reject('Пользователь с таким email не найден');
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		})
+		.normalizeEmail(),
+	body('password', 'Минимальная длина пароля 6 символов').isLength({ min: 6, max: 56 }).isAlphanumeric().trim(),
+];
